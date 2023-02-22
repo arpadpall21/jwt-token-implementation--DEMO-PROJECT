@@ -1,0 +1,63 @@
+POST http://localhost:3001/singup
+Content-Type: application/json
+
+{
+  "user": {
+    "name": "Arpad",
+    "password": "Arpad's secret password"
+  }
+}
+
+
+###
+POST http://localhost:3001/login
+Content-Type: application/json
+
+{
+  "user": {
+    "name": "Arpad",
+    "password": "Arpad's secret password"
+  }
+}
+
+
+###
+POST http://localhost:3001/refresh
+Content-Type: application/json
+
+{
+  "user": {
+    "name": "Arpad"
+  }
+}
+
+
+###
+POST http://localhost:3001/logout
+Content-Type: application/json
+
+{
+  "user": {
+    "name": "Arpad"
+  }
+}
+
+
+###
+GET http://localhost:3000/posts
+Content-Type: application/json
+Authorization: Bearer <accessToken>
+
+###
+POST http://localhost:3000/posts
+Content-Type: application/json
+Authorization: Bearer <accessToken>
+
+{
+  "posts": ["this is some post", "this is another post"]
+}
+
+###
+DELETE http://localhost:3000/posts
+Content-Type: application/json
+Authorization: Bearer <accessToken>
