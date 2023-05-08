@@ -43,7 +43,8 @@ Content-Type: application/json
 }
 
 
-###
+### Resource Server Communication
+### 
 GET http://localhost:3000/posts
 Content-Type: application/json
 Authorization: Bearer <accessToken>
