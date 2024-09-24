@@ -1,29 +1,29 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-require('dotenv').config();      // loads secrets from .env as environment variable
+require('dotenv').config();
+
+const port = 3001;
+const accessTokenExpiresInMin = 2;
 
 const db = require('./fakeDb');
 const app = express();
-app.use(express.json());
-
-const port = 3001;
-const accessTokenExpiresInMin = 1;
-
 app.use(express.json(), cookieParser());
+
 
 app.post('/singup', (req, res) => {
   const { name: userName, password: userPassword } = req.body.user;
 
-  if (db.password[userName]) {    // has already an account
+  if (db.password[userName]) {
     res.status(409);
     res.end();
     return;
   }
 
-  db.password[userName] = userPassword;      // password should be hashed
+  db.password[userName] = userPassword;
 
   res.status(200);
+  res.send({ message: 'singup OK' });
   res.end();
 });
 
@@ -31,7 +31,7 @@ app.post('/login', (req, res) => {
   const { name: userName, password: userPassword } = req.body.user;
 
   if (db.password[userName] && db.password[userName] === userPassword) {
-    let refreshToken = undefined;
+    let refreshToken;
     const dbRefreshToken = db.refreshToken[userName];
 
     if (dbRefreshToken) {
@@ -45,6 +45,7 @@ app.post('/login', (req, res) => {
     res.cookie('accessToken', generateAccessToken(userName, accessTokenExpiresInMin), { httpOnly: true });
 
     res.status(200);
+    res.send({ message: 'login OK' });
     res.end();
     return;
   }
@@ -61,6 +62,7 @@ app.post('/refresh', (req, res) => {
     res.cookie('accessToken', generateAccessToken(userName, accessTokenExpiresInMin), { httpOnly: true });
 
     res.status(200);
+    res.send({ message: 'token refresh OK' });
     res.end();
     return;
   }
@@ -79,6 +81,7 @@ app.post('/logout', (req, res) => {
     res.cookie('accessToken', '', { httpOnly: true });
 
     res.status(200);
+    res.send({ message: 'logout out OK' });
     res.end();
     return;
   }
@@ -98,7 +101,3 @@ function generateRefreshToken(userName) {
 app.listen(port, () => {
   console.info(`authentication server is runing on port ${port}...`);
 });
-
-setInterval(() => {
-  console.info(db);
-}, 5000);

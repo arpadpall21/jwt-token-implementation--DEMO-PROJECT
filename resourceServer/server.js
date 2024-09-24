@@ -1,15 +1,13 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
-require('dotenv').config();      // loads secrets from .env as environment variable
+require('dotenv').config();
+
+const port = 3000;
 
 const db = require('./fakeDb');
 const app = express();
 app.use(express.json());
 
-const port = 3000;
-
-app.use(express.json());
 
 app.get('/posts', authenticate, (req, res) => {
   if (db.posts[`${req.user}`]) {
@@ -42,14 +40,14 @@ app.delete('/posts', authenticate, (req, res) => {
 });
 
 function authenticate(req, res, next) {
-  const authHearder = req.get('authorization');    // get and proces the token from the header
+  const authHearder = req.get('authorization');
   const jwtToken = authHearder && authHearder.split(' ')[1];
 
   if (!jwtToken) {
     res.sendStatus(401);
   }
 
-  jwt.verify(jwtToken, process.env.ACCES_TOKEN_SECRET, (err, user) => {     // verify token
+  jwt.verify(jwtToken, process.env.ACCES_TOKEN_SECRET, (err, user) => {
       if (err) {
         console.error(err);
         res.sendStatus(403);
@@ -58,15 +56,11 @@ function authenticate(req, res, next) {
         return;
       }
 
-      req.user = user.userName;      // getting the user encoded in the token
+      req.user = user.userName;
       next();
   });
 }
 
-app.listen(PORT, () => {
+app.listen(port, () => {
   console.info(`resource server is runing on port ${port}...`);
 });
-
-setInterval(() => {
-  console.info(db);
-}, 5000);
